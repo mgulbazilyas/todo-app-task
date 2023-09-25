@@ -159,9 +159,10 @@ const handleSubmit = () => {
                 console.log(error);
             }).finally(() => {
                 pageData.loading = false;
-
+                alert("todo editted successfully");
+                pageData.modal.show = false;
             });
-    }else{
+    } else {
         // Create New Item
         const raw = JSON.stringify({ ...todo, });
         const config = {
@@ -175,12 +176,13 @@ const handleSubmit = () => {
                 pageData.items = [];
                 pageData.pageNo = 1;
                 getPageData();
-                            })
+            })
             .catch(function (error) {
                 console.log(error);
             }).finally(() => {
                 pageData.loading = false;
-
+                alert("TODO Created successfully");
+                pageData.modal.show = false;
             });
 
     }
@@ -261,15 +263,11 @@ button {
                             {{ statusToText[item.status] }}
                         </span>
                     </p>
-                    <div class="flex justify-center items-center mt-8 mb-8" v-if="pageData.loading">
-                        <div class="loader"></div>
-                    </div>
-                    <template v-else>
-                        <button class="bg-blue-500 text-white px-4 py-2 rounded-full mr-2"
+
+                        <button class="bg-blue-500 text-white px-4 py-2 rounded-full mr-2" :disabled="pageData.loading"
                             @click="editTodo(item)">Edit</button>
-                        <button class="bg-red-500 text-white px-4 py-2 rounded-full"
+                        <button class="bg-red-500 text-white px-4 py-2 rounded-full" :disabled="pageData.loading"
                             @click="deleteTodo(item)">Delete</button>
-                    </template>
 
 
                 </div>
@@ -285,13 +283,17 @@ button {
             <div class="loader" v-else></div>
         </div>
         <Modal :show="pageData.modal.show">
-            <div class="flex justify-end mb-4 mr-2 mt-1">
-                <span @click="pageData.modal.show = false;" class="cursor-pointer">
-                    X
-                </span>
+            <div class="row">
+
+                <div class="flex justify-between items-center mb-4 mt-2 mr-2">
+                    <h1 class="pl-2" v-if="pageData.modal.todo.id">Update TODO</h1>
+                    <h1 class="pl-2" v-else>Create TODO</h1>
+                    <span @click="pageData.modal.show = false;" class="cursor-pointer">
+                        X
+                    </span>
+                </div>
             </div>
             <div class="row p-4">
-
                 <form @submit.prevent="handleSubmit">
                     <div class="mb-4">
                         <label for="title" class="block text-gray-700 font-bold mb-2">Title:</label>

@@ -36,7 +36,7 @@ class TodoController extends Controller
         $todo->user_id = Auth::id(); // Assuming you have user authentication
 
         $todo->save();
-        return response()->json(['message' => 'ToDo created successfully']);
+        return response()->json(['message' => 'ToDo created successfully', 'id' => $todo->id]);
     }
     public function view($id)
     {
