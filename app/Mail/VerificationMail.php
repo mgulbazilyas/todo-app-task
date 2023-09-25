@@ -48,6 +48,8 @@ class VerificationMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [
+            
+        ];
     }
 }

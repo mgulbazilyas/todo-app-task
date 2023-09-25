@@ -16,8 +16,12 @@ use \App\Http\Controllers\TodoController;
 */
 
 Route::post('login', [ApiController::class, 'login']);
+Route::post('register', [ApiController::class, 'register']);
+Route::post('verify', [ApiController::class, 'verifyEmail']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->post('logout', [ApiController::class, 'logout']);
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('todos', [TodoController::class, 'create']);
     Route::get('todos', [TodoController::class, 'list']);
     Route::get('todos/{id}', [TodoController::class, 'view']);

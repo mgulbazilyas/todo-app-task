@@ -12,22 +12,25 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class ApiController extends Controller
 {
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+        $email = $request->email;
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => explode(",", $email)[0],
+            'email' => $email,
             'password' => Hash::make($request->password),
         ]);
+        event(new Registered($user));
+        return response()->json(["status" => "success", "message" => "Please check your email for verification"], 201);
     }
 
     public function login(LoginRequest $request)
@@ -44,4 +47,11 @@ class ApiController extends Controller
             'token' => $token,
         ]);
     }
+
+    public function logout(Request $request){
+        $request->user()->tokens()->where('id', $request->user()->currentAccessToken()->id)->delete();
+
+    return response()->json(['message' => 'Logged out successfully', 'status' => 'success']);
+    }
+
 }
